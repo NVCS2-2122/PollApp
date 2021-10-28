@@ -51,8 +51,8 @@ app.get("/question",(req,res)=>{
     res.json(questions)
 })
 
-app.post("/question",(req,res)=>{
-    console.log(req.body) //log answer
+app.post("/question/:id",(req,res)=>{
+    console.log(req.params.id,req.body) //log answer
     res.send("Thanks for your answer!")
 })
 

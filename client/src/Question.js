@@ -1,22 +1,27 @@
-import React from 'react'
+import React,{useState} from 'react'
 
 const Question = ({title,id,options}) => {
     const [currentAnswer,setAnswer] = useState(null)
     const handleSubmit = () => {
+        if (currentAnswer == null) {
+            alert("Pick an answer you noob!")
+            return false
+        }
+
         const config = {
             method: "POST",
             headers: {
                 "Content-Type":"application/json"
             },
             body: JSON.stringify({
-                answer: "a",
+                answer: currentAnswer,
                 user: {
                     id: 1,
                     username: "JackAttack"
                 }
             })
         }
-        fetch("/question/1",config)
+        fetch("/question/"+id,config)
     }
 
     return (
@@ -28,6 +33,9 @@ const Question = ({title,id,options}) => {
                     type="radio"
                     value={o.id}
                     name={"q1"}
+                    onChange={()=>{
+                        setAnswer(o.id)
+                    }}
                 />
                 <label>{o.title}</label>
 
@@ -35,7 +43,8 @@ const Question = ({title,id,options}) => {
             )}
             <input 
                 type="submit" 
-                onClick={handleSubmit}
+                onClick={handleSubmit} 
+                disabled={(currentAnswer == null) ? true : false}
             />
         </div>
     )
