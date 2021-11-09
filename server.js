@@ -1,54 +1,31 @@
 const express = require('express')
 const app = new express()
-
-const questions = [
-    {
-        "id":1,
-        "title":"What are you doing after school?",
-        "options":[
-            {
-                "id":1,
-                "title":"Sport",
-                "votes":0
-            },
-            {
-                "id":2,
-                "title":"Work",
-                "votes":0
-            },
-            {
-                "id":3,
-                "title":"Chores",
-                "votes":0
-            },
-            {
-                "id":4,
-                "title":"Study/HW",
-                "votes":0
-            },
-            {
-                "id":5,
-                "title":"Sleep",
-                "votes":0
-            },
-            {
-                "id":6,
-                "title":"Videogames",
-                "votes":0
-            },
-            {
-                "id":7,
-                "title":"nonya bidness",
-                "votes":0
-            }
-        ]
-    }
-]
+const sqlite = require('sqlite3')
+const db = new sqlite.Database('pollapp.db',() => {
+    console.log("database connection opened")
+})
 
 app.use(express.static("./client/build"))
 
 app.get("/question",(req,res)=>{
-    res.json(questions)
+    let _questions
+    const sql = "SELECT * FROM questions"
+    db.all(sql,(err,questions)=>{
+        //console.info(questions)
+        const sql2 = "SELECT * FROM options"
+        db.all(sql2,(err,options) => {
+            questions.forEach(question => {
+                question.options = options.filter(o => 
+                    o.question_id == question.id    
+                )
+            })
+            _questions = questions
+            console.info(_questions)
+            res.json(_questions)
+        })        
+    })
+    
+    
 })
 
 app.post("/question/:id",(req,res)=>{
